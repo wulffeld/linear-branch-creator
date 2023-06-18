@@ -17,6 +17,7 @@ def run
   Dir.chdir @cwd
 
   cards = fetch_cards
+  return if cards.empty?
 
   puts "Available cards:"
 
@@ -52,20 +53,21 @@ end
 def fetch_cards
   data = query(<<~GRAPHQL
       {
-        viewer {
-          assignedIssues {
-            nodes {
-              identifier
-              number
-              title
-            }
+        issues(filter: {
+          assignee: { email: { eq: "#{ENV['ASSIGNEE_EMAIL']}" } }
+          state: { type: { eq: "#{ENV['STATE']}" } }
+        }) {
+          nodes {
+            identifier
+            number
+            title
           }
         }
-      }
+    }
     GRAPHQL
   )
 
-  data["viewer"]["assignedIssues"]["nodes"]
+  data["issues"]["nodes"]
 end
 
 # Create a branch

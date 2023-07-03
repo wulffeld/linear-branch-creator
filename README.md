@@ -10,7 +10,7 @@ Clone this and then set the following environment variables in a .env file:
 - `INITIALS` - Your initials.
 - `PREFIX_CHOICES` - Which types of prefixes you work with. Comma separated list. E.g. "chore,bug,feature".
 - `ASSIGNEE_EMAIL` - The email address of the owner of the cards.
-- `STATE` - The state for the query. Examples: "backlog" or "unstarted".
+- `STATES` - The state(s) for the query. Examples: "unstarted" or "backlog,started".
 
 This will end up creating branches of the form:
 

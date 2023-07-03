@@ -12,6 +12,8 @@ require "json"
 require "dotenv/load"
 require "tty-prompt"
 
+MAX_LENGTH = ENV["MAX_LENGTH"] || 78
+
 def run
   # Switch to calling folder.
   Dir.chdir @cwd
@@ -51,11 +53,14 @@ def query(query)
 end
 
 def fetch_cards
+  state_filters = ENV["STATES"].split(",").map { |state| %Q("#{state}") }.join(", ")
+
   data = query(<<~GRAPHQL
       {
         issues(filter: {
           assignee: { email: { eq: "#{ENV['ASSIGNEE_EMAIL']}" } }
-          state: { type: { eq: "#{ENV['STATE']}" } }
+          state: { type: { in: [#{state_filters}] } }
+
         }) {
           nodes {
             identifier

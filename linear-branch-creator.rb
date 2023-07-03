@@ -79,6 +79,7 @@ end
 def create_branch(card)
   branch_type = prompt_branch_type
   branch_name = "#{branch_type}/#{ENV["INITIALS"]}-#{card['identifier'].downcase}-#{card["title"].gsub(/([^a-zA-Z0-9\-]+)/, "-").downcase}"
+  branch_name = branch_name[0..MAX_LENGTH]
 
   # Create the branch.
   `git checkout -b #{branch_name}`

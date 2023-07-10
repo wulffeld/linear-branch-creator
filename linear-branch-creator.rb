@@ -12,7 +12,7 @@ require "json"
 require "dotenv/load"
 require "tty-prompt"
 
-MAX_LENGTH = ENV["MAX_LENGTH"] || 78
+MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
 
 def run
   # Switch to calling folder.

@@ -37,7 +37,7 @@ def query(query)
 
   headers = {
     "Content-Type" => "application/json",
-    "Authorization" => "Bearer #{ENV["LINEAR_API_KEY"]}"
+    "Authorization" => "#{ENV["LINEAR_API_KEY"]}"
   }
 
   uri = URI(url)

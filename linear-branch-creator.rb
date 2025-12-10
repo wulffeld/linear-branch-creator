@@ -7,9 +7,9 @@ Dir.chdir File.dirname(__FILE__)
 require "rubygems"
 require "bundler/setup"
 
-require "net/http"
-require "json"
 require "dotenv/load"
+require "httparty"
+require "json"
 require "tty-prompt"
 
 MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
@@ -40,16 +40,12 @@ def query(query)
     "Authorization" => "#{ENV["LINEAR_API_KEY"]}"
   }
 
-  uri = URI(url)
-  http = Net::HTTP.new(uri.host, uri.port)
-  http.use_ssl = true
-
-  request = Net::HTTP::Post.new(uri.path, headers)
-  request.body = { query: query }.to_json
-
-  response = http.request(request)
+  response = HTTParty.post(url, headers: headers, body: { query: query }.to_json)
 
   JSON.parse(response.body)["data"]
+rescue JSON::ParserError => e
+  puts "Error parsing response: #{response.body}"
+  raise e
 end
 
 def fetch_cards
@@ -60,7 +56,6 @@ def fetch_cards
         issues(filter: {
           assignee: { email: { eq: "#{ENV['ASSIGNEE_EMAIL']}" } }
           state: { type: { in: [#{state_filters}] } }
-
         }) {
           nodes {
             identifier

@@ -16,5 +16,5 @@ Clone this and then set the following environment variables in a .env file:
 This will end up creating branches of the form:
 
 ```
-  chore/mw-dev-1234-card-title
+  chore/DEV-1234-mw-card-title
 ```

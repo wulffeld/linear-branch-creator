@@ -7,9 +7,12 @@ Dir.chdir File.dirname(__FILE__)
 require "rubygems"
 require "bundler/setup"
 
+require "active_support/core_ext/object/blank"
+require "active_support/core_ext/enumerable"
 require "dotenv/load"
 require "httparty"
 require "json"
+require "openssl"
 require "tty-prompt"
 
 MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
@@ -73,7 +76,17 @@ end
 # Create a branch
 def create_branch(card)
   branch_type = prompt_branch_type
-  branch_name = "#{branch_type}/#{ENV["INITIALS"]}-#{card['identifier'].downcase}-#{card["title"].gsub(/([^a-zA-Z0-9\-]+)/, "-").downcase}"
+  branch_name = [
+    branch_type,
+    [
+      card["identifier"],
+      ENV["INITIALS"],
+      card["title"]
+        .gsub(/([\'\`])/, "")
+        .gsub(/([^a-zA-Z0-9\-]+)/, "-")
+        .downcase
+    ].compact_blank.join("-")
+  ].compact_blank.join("/")
   branch_name = branch_name[0..MAX_LENGTH]
 
   # Create the branch.

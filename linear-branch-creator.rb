@@ -2,7 +2,7 @@
 
 @cwd = Dir.pwd
 
-Dir.chdir File.dirname(__FILE__)
+Dir.chdir File.dirname(File.realpath(__FILE__))
 
 require "rubygems"
 require "bundler/setup"

@@ -24,6 +24,7 @@ Set the following environment variables in a .linear-branch-creator file in your
 - `ASSIGNEE_EMAIL` - The email address of the owner of the cards.
 - `STATES` - The state(s) for the query. Examples: "unstarted" or "backlog,started".
 - `MAX_LENGTH` - Maximum length of the branch name. Default is 78.
+- `FORMAT` - Branch name format using placeholders. Available placeholders: `%type%`, `%identifier%`, `%initials%`, `%title%`. Default is `%type%/%identifier%-%initials%-%title%`. Consecutive separators are collapsed if any placeholder is missing.
 
 NOTE: You can also set the environment variables in a .env file in the
 directory of the script if you're not using a project-specific config file.

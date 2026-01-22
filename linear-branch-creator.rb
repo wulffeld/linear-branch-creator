@@ -31,6 +31,7 @@ else
 end
 
 MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
+FORMAT = ENV["FORMAT"].presence || "%type%/%identifier%-%initials%-%title%"
 
 def run
   # Switch to calling folder.
@@ -88,23 +89,20 @@ def fetch_cards
   data["issues"]["nodes"]
 end
 
-# Create a branch
 def create_branch(card)
   branch_type = prompt_branch_type
-  branch_name = [
-    branch_type,
-    [
-      card["identifier"],
-      ENV["INITIALS"],
-      card["title"]
-        .gsub(/([\'\`])/, "")
-        .gsub(/([^a-zA-Z0-9\-]+)/, "-")
-        .downcase
-    ].compact_blank.join("-")
-  ].compact_blank.join("/")
-  branch_name = branch_name[0..MAX_LENGTH]
+  title = card["title"]
+    .gsub(/([\'\`])/, "")
+    .gsub(/([^a-zA-Z0-9\-]+)/, "-")
+    .downcase
 
-  # Create the branch.
+  branch_name = FormatBuilder.new(FORMAT).build(
+    type: branch_type,
+    identifier: card["identifier"],
+    initials: ENV["INITIALS"].presence,
+    title: title
+  )[0..MAX_LENGTH]
+
   `git checkout -b #{branch_name}`
   puts "Created branch: #{branch_name}"
 end

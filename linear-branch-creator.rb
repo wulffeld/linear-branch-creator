@@ -9,11 +9,26 @@ require "bundler/setup"
 
 require "active_support/core_ext/object/blank"
 require "active_support/core_ext/enumerable"
-require "dotenv/load"
+require "dotenv"
 require "httparty"
 require "json"
 require "openssl"
 require "tty-prompt"
+
+require_relative "lib/format_builder"
+
+# Load config from .linear-branch-creator in the project or .env in this directory.
+config_file = File.join(@cwd, ".linear-branch-creator")
+fallback_file = File.join(File.dirname(File.realpath(__FILE__)), ".env")
+
+if File.exist?(config_file)
+  Dotenv.load(config_file)
+elsif File.exist?(fallback_file)
+  Dotenv.load(fallback_file)
+else
+  puts "Error: No config file found. Create .linear-branch-creator in your project or .env in the script directory."
+  exit 1
+end
 
 MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
 

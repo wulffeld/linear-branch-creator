@@ -29,16 +29,36 @@ Set the following environment variables in a .linear-branch-creator file in your
 NOTE: You can also set the environment variables in a .env file in the
 directory of the script if you're not using a project-specific config file.
 
-## Run
+### Example Formats
 
 ```
-linear-branch-creator.rb
+FORMAT=%type%/%identifier%-%initials%-%title%
+
+Result:
+
+chore/DEV-1234-mw-card-title
 ```
+
+```
+FORMAT=%type%/%identifier%-%title%
+
+Result:
+
+chore/DEV-1234-card-title
+```
+
+```
+FORMAT=%identifier%-%type%-%initials%-%title%
+
+Result:
+
+DEV-1234-chore-mw-card-title
+```
+
+## Usage
 
 Run the script in your git project to create a new branch with a name based on one of your assigned Linear cards.
 
-This will end up creating branches of the form:
-
 ```
-  chore/DEV-1234-mw-card-title
+linear-branch-creator.rb
 ```

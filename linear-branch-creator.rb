@@ -34,9 +34,6 @@ MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
 FORMAT = ENV["FORMAT"].presence || "%type%/%identifier%-%initials%-%title%"
 
 def run
-  # Switch to calling folder.
-  Dir.chdir @cwd
-
   cards = fetch_cards
   return if cards.empty?
 
@@ -103,8 +100,18 @@ def create_branch(card)
     title: title
   )[0..MAX_LENGTH]
 
-  `git checkout -b #{branch_name}`
-  puts "Created branch: #{branch_name}"
+  unless inside_git_repo?(@cwd)
+    puts "Error: #{@cwd} is not inside a git repository."
+    exit 1
+  end
+
+  system("git", "-C", @cwd, "checkout", "-b", branch_name)
+  if $?.success?
+    puts "Created branch in #{@cwd}: #{branch_name}"
+  else
+    puts "Error: failed to create branch in #{@cwd}."
+    exit 1
+  end
 end
 
 def prompt_branch_type
@@ -122,6 +129,11 @@ end
 
 def prompt
   TTY::Prompt.new
+end
+
+def inside_git_repo?(directory)
+  system("git", "-C", directory, "rev-parse", "--is-inside-work-tree", out: File::NULL, err: File::NULL)
+  $?.success?
 end
 
 run

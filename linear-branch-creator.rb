@@ -32,6 +32,7 @@ end
 
 MAX_LENGTH = ENV["MAX_LENGTH"]&.to_i || 78
 FORMAT = ENV["FORMAT"].presence || "%type%/%identifier%-%initials%-%title%"
+UPPERCASE_IDENTIFIER = ENV["UPPERCASE_IDENTIFIER"].to_s.casecmp("true").zero?
 
 def run
   cards = fetch_cards
@@ -92,10 +93,12 @@ def create_branch(card)
     .gsub(/([\'\`])/, "")
     .gsub(/([^a-zA-Z0-9\-]+)/, "-")
     .downcase
+  identifier = card["identifier"].to_s
+  identifier = UPPERCASE_IDENTIFIER ? identifier.upcase : identifier.downcase
 
   branch_name = FormatBuilder.new(FORMAT).build(
     type: branch_type,
-    identifier: card["identifier"],
+    identifier: identifier,
     initials: ENV["INITIALS"].presence,
     title: title
   )[0..MAX_LENGTH]
